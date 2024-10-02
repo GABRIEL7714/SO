@@ -7,7 +7,6 @@
 
 #define KEY 1234
 
-// Estructura del mensaje
 struct message {
     long mtype;
     int signal_number;
@@ -41,7 +40,6 @@ int main() {
     struct message msg;
     int choice, process_id;
 
-    // Crear la cola de mensajes
     if ((msg_queue_id = msgget(KEY, IPC_CREAT | 0666)) == -1) {
         perror("Error creando la cola de mensajes");
         exit(EXIT_FAILURE);
@@ -59,22 +57,18 @@ int main() {
             continue;
         }
 
-        // Pedir el PID del proceso
         printf("Ingrese el PID del proceso: ");
         scanf("%d", &process_id);
 
-        // Verificar si el PID es válido
         if (kill(process_id, 0) == -1) {
             perror("PID inválido");
             continue;
         }
 
-        // Configurar el mensaje
         msg.mtype = (choice <= 3) ? 1 : 2;
         msg.signal_number = signal;
         msg.process_id = process_id;
 
-        // Enviar el mensaje a la cola
         if (msgsnd(msg_queue_id, &msg, sizeof(msg) - sizeof(long), 0) == -1) {
             perror("Error enviando el mensaje");
             exit(EXIT_FAILURE);
